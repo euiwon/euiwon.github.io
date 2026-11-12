@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>오테식이 로그인</title>
+<style>body{font-family:sans-serif;padding:24px;line-height:1.6}a.btn{display:inline-block;margin-top:16px;padding:12px 20px;background:#3e6ae1;color:#fff;border-radius:8px;text-decoration:none}</style>
+</head><body>
+<p id="msg">오테식이로 돌아가는 중…</p>
+<a id="go" class="btn" href="#" style="display:none">오테식이로 돌아가기</a>
+<script>
+// 테슬라 로그인 뒤 돌아오는 페이지. code·state를 화면이나 서버에 남기지 않고 앱으로만 넘긴다.
+(function(){
+  var q = new URLSearchParams(location.search);
+  var keep = new URLSearchParams();
+  ['code','state','error','error_description'].forEach(function(k){ if(q.has(k)) keep.set(k, q.get(k)); });
+  history.replaceState(null, '', location.pathname); // 주소창·기록에서 code 지움
+  if(!keep.has('code') && !keep.has('error')){ document.getElementById('msg').textContent = '로그인 정보가 없습니다. 앱에서 다시 시도해 주세요.'; return; }
+  var s = keep.toString();
+  var intent = 'intent://tesla-auth?' + s + '#Intent;scheme=otesik;package=kr.ewkim.teslahotspot;end';
+  var a = document.getElementById('go'); a.href = intent; a.style.display = 'inline-block';
+  document.getElementById('msg').textContent = keep.has('error') ? '로그인이 취소되었거나 실패했습니다.' : '로그인 완료. 아래 버튼을 누르면 오테식이로 돌아갑니다.';
+  location.replace(intent);
+})();
+</script>
+</body></html>
